@@ -15,7 +15,7 @@ service.interceptors.request.use(
     // Do something before request is sent
     if (store.getters.token) {
       // 让每个请求携带token-- ['X-Token']为自定义key 请根据实际情况自行修改
-      config.headers['X-Token'] = getToken()
+      config.headers['Authorization'] = getToken()
     }
     return config
   },
@@ -63,12 +63,26 @@ service.interceptors.response.use(
   //   }
   // },
   error => {
-    console.log('err' + error) // for debug
-    Message({
-      message: error.message,
-      type: 'error',
-      duration: 5 * 1000
-    })
+    const res = error.response
+    if (res.status === 401) {
+      Message({
+        message: '身份认证失败,请重新登录',
+        type: 'error',
+        duration: 5 * 1000
+      })
+    } else if (res.status === 403) {
+      Message({
+        message: '无权限访问！',
+        type: 'error',
+        duration: 5 * 1000
+      })
+    } else {
+      Message({
+        message: res.data.title,
+        type: 'error',
+        duration: 5 * 1000
+      })
+    }
     return Promise.reject(error)
   }
 )

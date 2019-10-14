@@ -48,12 +48,11 @@ const permission = {
   actions: {
     GenerateRoutes({ commit }, data) {
       return new Promise(resolve => {
-        const { roles } = data
         let accessedRoutes
-        if (roles.includes('admin')) {
+        if (data.data.roles.includes('admin')) {
           accessedRoutes = asyncRoutes
         } else {
-          accessedRoutes = filterAsyncRoutes(asyncRoutes, roles)
+          accessedRoutes = filterAsyncRoutes(asyncRoutes, data.data.permissions)
         }
         commit('SET_ROUTES', accessedRoutes)
         resolve(accessedRoutes)
